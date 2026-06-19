@@ -174,3 +174,28 @@ To run provider and client unit tests, execute:
 ```bash
 go test -v ./...
 ```
+
+---
+
+## Releasing & Publishing
+
+This repository uses [GoReleaser](https://goreleaser.com/) and GitHub Actions to automate compiles, checksum signatures, and release generation.
+
+### Automated Releases (GitHub Actions)
+
+When you tag a commit on the `main` branch with a semantic version (e.g., `v1.0.0`), the [Release GitHub Action workflow](.github/workflows/release.yml) is automatically triggered.
+
+This workflow will:
+1. Checkout the code at the tagged commit.
+2. Set up the Go environment based on the version in `go.mod`.
+3. Import the private GPG key used to sign the release (using the `GPG_PRIVATE_KEY` and `PASSPHRASE` repository secrets).
+4. Run GoReleaser to compile binaries for `freebsd`, `windows`, `linux`, and `darwin`, calculate SHA256 checksums, sign the checksums, and publish the release and its artifacts to GitHub (fully compliant with the Terraform Registry layout requirements).
+
+### Local GoReleaser Snapshot Builds
+
+To test the GoReleaser configuration locally without publishing or signing, install GoReleaser and run:
+
+```bash
+goreleaser build --snapshot --clean
+```
+

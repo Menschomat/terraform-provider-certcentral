@@ -14,6 +14,9 @@ It manages certificate configurations, API keys, and retrieves certificate/key P
 
 ```
 .
+├── .github/
+│   └── workflows/
+│       └── release.yml         # GitHub Actions automated release workflow
 ├── client/                     # Go client library for the Cert-Central API
 │   ├── client.go               # HTTP client methods and type definitions
 │   └── client_test.go          # Unit tests for the API client
@@ -24,6 +27,7 @@ It manages certificate configurations, API keys, and retrieves certificate/key P
 │       ├── certificate_resource.go    # certcentral_certificate resource
 │       ├── api_key_resource.go        # certcentral_api_key resource
 │       └── certificate_data_source.go # certcentral_certificate_data data source
+├── .goreleaser.yml             # GoReleaser configuration for provider builds
 ├── go.mod                      # Go module definition
 ├── go.sum                      # Go dependency checksums
 ├── main.go                     # Entrypoint serving the provider binary
