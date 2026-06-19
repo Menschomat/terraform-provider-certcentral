@@ -36,6 +36,7 @@ func (p *CertCentralProvider) Metadata(ctx context.Context, req provider.Metadat
 
 func (p *CertCentralProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		MarkdownDescription: "The Cert-Central Terraform provider allows you to manage SSL/TLS certificate configurations, provision access keys, and fetch issued certificates directly within your Terraform workflows.",
 		Attributes: map[string]schema.Attribute{
 			"address": schema.StringAttribute{
 				MarkdownDescription: "The HTTP address of the cert-central server (e.g. http://localhost:8080).",

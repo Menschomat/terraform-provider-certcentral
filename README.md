@@ -11,11 +11,35 @@ The Cert-Central Terraform provider allows you to manage SSL/TLS certificate con
 
 ---
 
-## Provider Configuration & Private Registries
+## Installation
 
-Since you do not need a `terraform.io` account, you can use the provider through either a **Gitea Private Registry** or a **Local Plugin Directory**.
+The Cert-Central provider is published on the official Terraform Registry at [Menschomat/certcentral](https://registry.terraform.io/providers/Menschomat/certcentral/latest).
 
-### Option A: Gitea Package Registry (Recommended)
+To use the provider in your Terraform configuration, add it to your `required_providers` block:
+
+```hcl
+terraform {
+  required_providers {
+    certcentral = {
+      source  = "Menschomat/certcentral"
+      version = "~> 1.0"
+    }
+  }
+}
+
+provider "certcentral" {
+  address = "http://localhost:8080"
+  token   = "your_admin_api_token"
+}
+```
+
+---
+
+## Local Development & Private Registries (Optional / Dev Only)
+
+For local development or custom deployments, you can use the provider through either a **Gitea Private Registry** or a **Local Plugin Directory**.
+
+### Option A: Gitea Package Registry (Development)
 Gitea has a built-in, Terraform-compliant package registry. When you write:
 ```hcl
 terraform {
@@ -27,7 +51,7 @@ terraform {
   }
 }
 ```
-Terraform resolves this by contacting `gitea.dmz.k8s.menscho.space` to download the pre-compiled binary matching your platform (e.g., `linux_amd64` or `darwin_arm64`). It does not read your Git repository or subdirectories directly.
+Terraform resolves this by contacting `gitea.dmz.k8s.menscho.space` to download the pre-compiled binary matching your platform (e.g., `linux_amd64` or `darwin_arm64`).
 
 To publish your compiled provider to Gitea's registry:
 1. Compile and zip the provider binary:
