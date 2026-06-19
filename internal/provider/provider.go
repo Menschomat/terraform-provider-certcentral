@@ -36,7 +36,7 @@ func (p *CertCentralProvider) Metadata(ctx context.Context, req provider.Metadat
 
 func (p *CertCentralProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "The Cert-Central Terraform provider allows you to manage SSL/TLS certificate configurations, provision access keys, and fetch issued certificates directly within your Terraform workflows. This provider is designed to interface with **cert-central**, a custom, containerized Let's Encrypt certificate manager solution (scheduled to be released and open-sourced in the near future).",
+		MarkdownDescription: "The Cert-Central Terraform provider allows you to manage SSL/TLS certificate configurations, provision access keys, and fetch issued certificates directly within your Terraform workflows. This provider is designed to interface with **cert-central**, a custom, containerized certificate manager solution currently supporting Let's Encrypt and ZeroSSL. Built on top of the lego Go library, it has the capacity to support more ACME providers in the future. The cert-central control plane is scheduled to be released and open-sourced in the near future.",
 		Attributes: map[string]schema.Attribute{
 			"address": schema.StringAttribute{
 				MarkdownDescription: "The HTTP address of the cert-central server (e.g. http://localhost:8080).",
