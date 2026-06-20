@@ -178,7 +178,7 @@ output "web_client_token" {
 #### Argument Reference
 * `description` (String, Optional) - A description of the API key configuration.
 * `allowed_domains` (List of String, Optional) - Domains this standard token is allowed to fetch certificates for (ignored for admin tokens).
-* `allowed_teams` (List of String, Optional) - The list of team UUIDs this token is scoped to.
+* `allowed_teams` (List of String, Optional) - The list of team UUIDs this token is scoped to (scopes configuration management if admin=true, or certificate retrieval if admin=false).
 * `admin` (Boolean, Required) - If `true`, this token is used for configuration management (control plane). If `false`, this is a standard fetch token used to pull raw certificate and private key files.
 
 #### API Key Scoping Matrix
