@@ -29,8 +29,17 @@ data "certer_certificate_data" "example" {
 
 - `cert_filename` (String) The file name of the certificate in the storage directory.
 - `certificate` (String, Sensitive) The PEM-encoded certificate chain.
+- `days_remaining` (Number) Number of days remaining before expiration.
 - `domain` (String) The primary domain name of the certificate.
+- `expires_at` (String) The end of validity (NotAfter) in RFC3339 format.
+- `is_valid` (Boolean) true if current time is within validity bounds.
 - `issued` (Boolean) Whether the certificate has been issued and stored.
+- `issued_at` (String) The start of validity (NotBefore) in RFC3339 format.
+- `issuer_common_name` (String) Common Name (CN) of the issuing authority.
+- `key_algorithm` (String) Public key algorithm (e.g. RSA, ECDSA).
 - `key_filename` (String) The file name of the private key in the storage directory.
+- `key_size` (Number) Key size in bits (e.g. 2048, 256).
 - `private_key` (String, Sensitive) The PEM-encoded private key.
 - `sans` (List of String) Subject Alternative Names (SANs) for this certificate.
+- `serial_number` (String) Hexadecimal serial number of the certificate.
+- `signature_algorithm` (String) Name of signature algorithm (e.g. SHA256-RSA).

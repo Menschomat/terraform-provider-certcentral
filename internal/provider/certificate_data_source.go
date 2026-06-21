@@ -19,14 +19,23 @@ type CertificateDataSource struct {
 }
 
 type CertificateDataSourceModel struct {
-	CertificateID types.String   `tfsdk:"certificate_id"`
-	Domain        types.String   `tfsdk:"domain"`
-	Sans          []types.String `tfsdk:"sans"`
-	Issued        types.Bool     `tfsdk:"issued"`
-	Certificate   types.String   `tfsdk:"certificate"`
-	PrivateKey    types.String   `tfsdk:"private_key"`
-	CertFilename  types.String   `tfsdk:"cert_filename"`
-	KeyFilename   types.String   `tfsdk:"key_filename"`
+	CertificateID      types.String   `tfsdk:"certificate_id"`
+	Domain             types.String   `tfsdk:"domain"`
+	Sans               []types.String `tfsdk:"sans"`
+	Issued             types.Bool     `tfsdk:"issued"`
+	Certificate        types.String   `tfsdk:"certificate"`
+	PrivateKey         types.String   `tfsdk:"private_key"`
+	CertFilename       types.String   `tfsdk:"cert_filename"`
+	KeyFilename        types.String   `tfsdk:"key_filename"`
+	IssuedAt           types.String   `tfsdk:"issued_at"`
+	ExpiresAt          types.String   `tfsdk:"expires_at"`
+	DaysRemaining      types.Int64    `tfsdk:"days_remaining"`
+	IsValid            types.Bool     `tfsdk:"is_valid"`
+	SerialNumber       types.String   `tfsdk:"serial_number"`
+	IssuerCommonName   types.String   `tfsdk:"issuer_common_name"`
+	SignatureAlgorithm types.String   `tfsdk:"signature_algorithm"`
+	KeyAlgorithm       types.String   `tfsdk:"key_algorithm"`
+	KeySize            types.Int64    `tfsdk:"key_size"`
 }
 
 func NewCertificateDataSource() datasource.DataSource {
@@ -76,6 +85,42 @@ func (d *CertificateDataSource) Schema(ctx context.Context, req datasource.Schem
 				MarkdownDescription: "The file name of the private key in the storage directory.",
 				Computed:            true,
 			},
+			"issued_at": schema.StringAttribute{
+				MarkdownDescription: "The start of validity (NotBefore) in RFC3339 format.",
+				Computed:            true,
+			},
+			"expires_at": schema.StringAttribute{
+				MarkdownDescription: "The end of validity (NotAfter) in RFC3339 format.",
+				Computed:            true,
+			},
+			"days_remaining": schema.Int64Attribute{
+				MarkdownDescription: "Number of days remaining before expiration.",
+				Computed:            true,
+			},
+			"is_valid": schema.BoolAttribute{
+				MarkdownDescription: "true if current time is within validity bounds.",
+				Computed:            true,
+			},
+			"serial_number": schema.StringAttribute{
+				MarkdownDescription: "Hexadecimal serial number of the certificate.",
+				Computed:            true,
+			},
+			"issuer_common_name": schema.StringAttribute{
+				MarkdownDescription: "Common Name (CN) of the issuing authority.",
+				Computed:            true,
+			},
+			"signature_algorithm": schema.StringAttribute{
+				MarkdownDescription: "Name of signature algorithm (e.g. SHA256-RSA).",
+				Computed:            true,
+			},
+			"key_algorithm": schema.StringAttribute{
+				MarkdownDescription: "Public key algorithm (e.g. RSA, ECDSA).",
+				Computed:            true,
+			},
+			"key_size": schema.Int64Attribute{
+				MarkdownDescription: "Key size in bits (e.g. 2048, 256).",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -122,6 +167,33 @@ func (d *CertificateDataSource) Read(ctx context.Context, req datasource.ReadReq
 			data.PrivateKey = types.StringValue(c.PrivateKey)
 			data.CertFilename = types.StringValue(c.CertFilename)
 			data.KeyFilename = types.StringValue(c.KeyFilename)
+
+			if c.Issued && c.Certificate != "" {
+				meta, err := ParsePEMCertificate(c.Certificate)
+				if err == nil {
+					data.IssuedAt = types.StringValue(meta.IssuedAt)
+					data.ExpiresAt = types.StringValue(meta.ExpiresAt)
+					data.DaysRemaining = types.Int64Value(meta.DaysRemaining)
+					data.IsValid = types.BoolValue(meta.IsValid)
+					data.SerialNumber = types.StringValue(meta.SerialNumber)
+					data.IssuerCommonName = types.StringValue(meta.IssuerCommonName)
+					data.SignatureAlgorithm = types.StringValue(meta.SignatureAlgorithm)
+					data.KeyAlgorithm = types.StringValue(meta.KeyAlgorithm)
+					data.KeySize = types.Int64Value(meta.KeySize)
+				} else {
+					resp.Diagnostics.AddWarning("Certificate Parsing Warning", fmt.Sprintf("Failed to parse certificate PEM data: %s", err))
+				}
+			} else {
+				data.IssuedAt = types.StringNull()
+				data.ExpiresAt = types.StringNull()
+				data.DaysRemaining = types.Int64Null()
+				data.IsValid = types.BoolNull()
+				data.SerialNumber = types.StringNull()
+				data.IssuerCommonName = types.StringNull()
+				data.SignatureAlgorithm = types.StringNull()
+				data.KeyAlgorithm = types.StringNull()
+				data.KeySize = types.Int64Null()
+			}
 			break
 		}
 	}
